@@ -1,0 +1,132 @@
+{
+  "native_80class": {
+    "map50": 0.8172422289997909,
+    "map50_95": 0.6308821043574939
+  },
+  "shared_20class": {
+    "mAP50_shared_20": 0.8172422289997912,
+    "mAP50-95_shared_20": 0.6308821043574939
+  },
+  "per_class": [
+    {
+      "voc_class": "aeroplane",
+      "coco_class": "airplane",
+      "AP50": 0.9428649277256801,
+      "AP50-95": 0.713315619250909
+    },
+    {
+      "voc_class": "bicycle",
+      "coco_class": "bicycle",
+      "AP50": 0.8757906989301786,
+      "AP50-95": 0.6660745876371068
+    },
+    {
+      "voc_class": "bird",
+      "coco_class": "bird",
+      "AP50": 0.8311221963636742,
+      "AP50-95": 0.6069900575350888
+    },
+    {
+      "voc_class": "boat",
+      "coco_class": "boat",
+      "AP50": 0.6722715392140651,
+      "AP50-95": 0.4560934284015121
+    },
+    {
+      "voc_class": "bottle",
+      "coco_class": "bottle",
+      "AP50": 0.7397453835350074,
+      "AP50-95": 0.5266048661904299
+    },
+    {
+      "voc_class": "bus",
+      "coco_class": "bus",
+      "AP50": 0.9295654745375874,
+      "AP50-95": 0.8365096015726682
+    },
+    {
+      "voc_class": "car",
+      "coco_class": "car",
+      "AP50": 0.849945282896932,
+      "AP50-95": 0.6737303511896013
+    },
+    {
+      "voc_class": "cat",
+      "coco_class": "cat",
+      "AP50": 0.9127249528410849,
+      "AP50-95": 0.7855253279401462
+    },
+    {
+      "voc_class": "chair",
+      "coco_class": "chair",
+      "AP50": 0.5637834071207308,
+      "AP50-95": 0.4014867972602591
+    },
+    {
+      "voc_class": "cow",
+      "coco_class": "cow",
+      "AP50": 0.8774704234341901,
+      "AP50-95": 0.6924747714310475
+    },
+    {
+      "voc_class": "diningtable",
+      "coco_class": "dining table",
+      "AP50": 0.7368860947559694,
+      "AP50-95": 0.5771224348610844
+    },
+    {
+      "voc_class": "dog",
+      "coco_class": "dog",
+      "AP50": 0.8725674044799402,
+      "AP50-95": 0.7041925032457284
+    },
+    {
+      "voc_class": "horse",
+      "coco_class": "horse",
+      "AP50": 0.9115882141543935,
+      "AP50-95": 0.728327578530093
+    },
+    {
+      "voc_class": "motorbike",
+      "coco_class": "motorcycle",
+      "AP50": 0.9069981106168967,
+      "AP50-95": 0.687074519239599
+    },
+    {
+      "voc_class": "person",
+      "coco_class": "person",
+      "AP50": 0.8895726071200021,
+      "AP50-95": 0.6514645537413422
+    },
+    {
+      "voc_class": "pottedplant",
+      "coco_class": "potted plant",
+      "AP50": 0.4845223451591577,
+      "AP50-95": 0.2907772118912032
+    },
+    {
+      "voc_class": "sheep",
+      "coco_class": "sheep",
+      "AP50": 0.8409218140119357,
+      "AP50-95": 0.6620145599550555
+    },
+    {
+      "voc_class": "sofa",
+      "coco_class": "couch",
+      "AP50": 0.7375328300928308,
+      "AP50-95": 0.6381984168986009
+    },
+    {
+      "voc_class": "train",
+      "coco_class": "train",
+      "AP50": 0.9239485725497317,
+      "AP50-95": 0.7285724655621322
+    },
+    {
+      "voc_class": "tvmonitor",
+      "coco_class": "tv",
+      "AP50": 0.8450223004558324,
+      "AP50-95": 0.5910924348162714
+    }
+  ]
+}
