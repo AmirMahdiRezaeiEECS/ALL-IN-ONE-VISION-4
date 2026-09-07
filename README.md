@@ -1,3 +1,5 @@
+<img width="1426" height="548" alt="Screenshot 1405-06-09 at 6 03 19 AM" src="https://github.com/user-attachments/assets/b6a7a35a-8953-45f5-8560-7fd17a23f903" />
+
 # ALL IN ONE VISION 4 (A4)
 
 **ALL-IN-ONE-VISION is a collection of self-contained projects, organized inside the `projects/` folder.**
