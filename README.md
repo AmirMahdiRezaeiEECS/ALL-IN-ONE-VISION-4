@@ -326,12 +326,13 @@ Note2: Focus on the **`template/notebook.ipynb.` that is the most important part
 
 ---
 
-ALL-IN-ONE-VISION-4 Documentation
+# ALL-IN-ONE-VISION-4 Documentation
+
 Teaching material for understanding the repository and for turning the general project template into a concrete experiment.
 
-Reading order
+## Reading order
 
-00_start_here.md — Orientation and the big idea
-01_what_is_going_on.md — Architecture, philosophy, notebook lifecycle
-02_how_to_edit_the_template.md — Step-by-step recipe for a new project
-03_notebook_walkthrough.md — Section-by-section explanation of template/notebook-v3.ipynb
+1. **[00_start_here.md](00_start_here.md)** — Orientation and the big idea  
+2. **[01_what_is_going_on.md](01_what_is_going_on.md)** — Architecture, philosophy, notebook lifecycle  
+3. **[02_how_to_edit_the_template.md](02_how_to_edit_the_template.md)** — Step-by-step recipe for a new project  
+4. **[03_notebook_walkthrough.md](03_notebook_walkthrough.md)** — Section-by-section explanation of `template/notebook-v3.ipynb`
