@@ -334,5 +334,10 @@ Teaching material for understanding the repository and for turning the general p
 
 1. **[00_start_here.md](https://github.com/AmirMahdiRezaeiEECS/ALL-IN-ONE-VISION-4/blob/main/docs/00_start_here.md)** — Orientation and the big idea  
 2. **[01_what_is_going_on.md](https://github.com/AmirMahdiRezaeiEECS/ALL-IN-ONE-VISION-4/blob/main/docs/01_what_is_going_on.md)** — Architecture, philosophy, notebook lifecycle  
-3. **[02_how_to_edit_the_template.md](02_how_to_edit_the_template.md)** — Step-by-step recipe for a new project  
-4. **[03_notebook_walkthrough.md](03_notebook_walkthrough.md)** — Section-by-section explanation of `template/notebook-v3.ipynb`
+3. **[02_how_to_edit_the_template.md](https://github.com/AmirMahdiRezaeiEECS/ALL-IN-ONE-VISION-4/blob/main/docs/02_how_to_edit_the_template.md)** — Step-by-step recipe for a new project  
+4. **[03_notebook_walkthrough.md](https://github.com/AmirMahdiRezaeiEECS/ALL-IN-ONE-VISION-4/blob/main/docs/03_notebook_walkthrough.md)** — Section-by-section explanation of `template/notebook-v3.ipynb`
+
+Related resources
+
+template/notebook-v3.ipynb — the actual experiment interface
+Ultralytics documentation and the yolo-* skills that live in this repository
