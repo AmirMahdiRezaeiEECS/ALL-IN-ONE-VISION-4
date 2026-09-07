@@ -1,0 +1,4 @@
+interface:
+  display_name: "A4 Project from Template"
+  short_description: "Turn the A4 template into a concrete task+dataset project"
+  default_prompt: "Use $a4-project-from-template to scaffold a new projects/Task/Dataset from the template and adapt the notebook."
