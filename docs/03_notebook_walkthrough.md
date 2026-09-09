@@ -123,9 +123,22 @@ model.train(
 - Class-count mismatches are handled automatically by Ultralytics (the head is re-initialized; the backbone keeps its weights).
 - Every run gets its own directory under `runs/` (`baseline`, `baseline2`, …). Nothing is overwritten.
 
-**Optional tuning**  
-`RUN_TUNE = False` by default.  
-The genetic tuner is useful, but it is the **least** effective lever. Exhaust cheaper improvements first (better labels, longer training, larger image size, bigger model) before spending a large budget on hyper-parameter search.
+**Optional tuning (baseline-first)**  
+`RUN_TUNE = False` by default. The genetic tuner (`model.tune()`) runs many short trainings
+and is the **least** effective lever. Exhaust cheaper improvements first (better labels,
+longer training, larger image size, bigger model, domain augmentation) before enabling it.
+
+Workflow enforced by the notebook:
+
+1. Always complete the normal single-shot `model.train(...)` baseline first.
+2. Inspect Section 4. Only if the baseline is healthy, set `RUN_TUNE = True` and run the
+   tuning cell (`TUNE_EPOCHS`, `TUNE_ITERATIONS`, `TUNE_NAME`).
+3. Results → `runs/<task>/<name>_tune/best_hyperparameters.yaml`.
+4. Promote useful values into a new experiment YAML, choose a new `EXPERIMENT_NAME`,
+   leave `RUN_TUNE = False`, and retrain fully. Do not ship the short-search checkpoint.
+
+See the notebook intro section "Optional hyperparameter tuning (baseline-first workflow)",
+the `yolo-tuning` skill, and the [Ultralytics guide](https://docs.ultralytics.com/guides/hyperparameter-tuning/).
 
 **What you edit**  
 Usually nothing beyond the overrides file and the experiment name.  
@@ -167,6 +180,8 @@ Assemble configuration + metrics into one readable, re-runnable record.
 The cell deliberately reads from disk (`args.yaml`, `results.csv`, `best.pt`) so it still works if you re-open the notebook in a fresh kernel later.
 
 Everything printed here already exists on disk; the cell just makes it human-friendly.
+If optional tuning was run, record the path to `best_hyperparameters.yaml` in the free-form
+Notes of the Section 7 report.
 
 ---
 
@@ -198,7 +213,9 @@ The report is written to:
 docs/{EXPERIMENT_NAME}_report.md
 ```
 
-It contains configuration, training summary, metrics, export info, and a free-form “Notes” section for qualitative observations.
+It contains configuration, training summary, an optional-tuning subsection (whether
+`RUN_TUNE` was enabled and where `best_hyperparameters.yaml` lives), metrics, export info,
+and a free-form “Notes” section for qualitative observations.
 
 ---
 
@@ -243,6 +260,7 @@ Everywhere else, prefer the standard Ultralytics API.
 | `configs/datasets/` | New dataset YAML |
 | `configs/experiments/` | Optional overrides YAML |
 | Section 2 | Set `RUN_SMOKE_TEST = True` once |
+| Section 3 | Leave `RUN_TUNE = False` until baseline is healthy; then promote hyps |
 | Section 6 | Change `EXPORT_FORMAT` if needed |
 | Everything else | Leave alone |
 

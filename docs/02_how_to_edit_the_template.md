@@ -157,7 +157,23 @@ You should only write custom Python in the rare places the notebook itself marks
 
 ---
 
-## Step 6 — Keep the project tidy
+## Step 6 — Optional hyperparameter tuning (only after a healthy baseline)
+
+Tuning is **off by default** (`RUN_TUNE = False` in Section 3). Follow this order:
+
+1. Finish a normal single-shot training and inspect Section 4.
+2. Only if the baseline looks sound, set `RUN_TUNE = True`, choose modest `TUNE_EPOCHS` /
+   `TUNE_ITERATIONS`, and run the tuning cell.
+3. Open `runs/<task>/<EXPERIMENT_NAME>_tune/best_hyperparameters.yaml`.
+4. Promote the values you want into a **new** experiment YAML, pick a new
+   `EXPERIMENT_NAME`, leave `RUN_TUNE = False`, and re-run a full-length training.
+
+Do not treat the short-search run as the final model. See the notebook intro section
+"Optional hyperparameter tuning (baseline-first workflow)" and the `yolo-tuning` skill.
+
+---
+
+## Step 7 — Keep the project tidy
 
 - All Ultralytics outputs already live under `runs/`. Do not invent parallel folders.
 - Put qualitative notes and next steps inside the generated report or in `docs/`.
@@ -166,7 +182,7 @@ You should only write custom Python in the rare places the notebook itself marks
 
 ---
 
-## Step 7 — Adding more experiments later
+## Step 8 — Adding more experiments later
 
 You do **not** create a new project folder for every model size or hyper-parameter change.
 
@@ -190,6 +206,7 @@ All runs stay under the same project, making comparison trivial.
 | Evaluating `last.pt` instead of `best.pt` | You may report an over-fitted checkpoint | Always load `weights/best.pt` |
 | Putting every Ultralytics argument into the overrides YAML | Hides the real intentional changes | Only record settings you have a reason to change |
 | Creating a new project for every model variant | Explodes the folder structure | Keep experiments inside one task+dataset project |
+| Enabling `RUN_TUNE` before a healthy baseline | Wastes GPU on a broken pipeline | Inspect Section 4 first; promote hyps then retrain fully |
 
 ---
 
@@ -200,6 +217,7 @@ All runs stay under the same project, making comparison trivial.
 - [ ] `TASK` and model suffix match.
 - [ ] Experiment name is self-describing.
 - [ ] Overrides file contains only intentional changes.
+- [ ] If tuning was used: promoted best hyps into a new experiment and retrained fully.
 - [ ] Evaluation used `best.pt`.
 - [ ] A markdown report exists under `docs/`.
 - [ ] You can re-open the notebook in a fresh session and still understand what was run.
