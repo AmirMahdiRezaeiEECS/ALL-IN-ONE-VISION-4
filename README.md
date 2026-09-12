@@ -4,7 +4,7 @@
 
 A simple, low-code, notebook-centered workflow for YOLO experiments.
 
-ALL-IN-ONE-VISION is a collection of self-contained projects, organized inside the `projects/` folder.
+ALL-IN-ONE-X is a collection of self-contained projects, organized inside the `projects/` folder.
 
 The core idea is that every project is an edited instance of a general project template. The template is the primary product of the repository; individual projects are its task- and dataset-specific implementations.
 
