@@ -59,6 +59,7 @@ configs/experiments/{EXPERIMENT_NAME}.yaml
 ```
 
 and stores the result in `overrides`. Only intentional changes belong in that file.
+`class_aliases` is one such intentional key — see Section 3 below.
 
 **Sanity-check cell**  
 It compares the model filename suffix (`-seg`, `-pose`, …) with the chosen `TASK`.  
@@ -92,10 +93,19 @@ The checks are ordered from cheapest to most conclusive:
    - `labels_correlogram.jpg` — systematic labeling artifacts  
    - `train_batch0.jpg` — actual augmented images with labels drawn on them
 
+5. **Optional — discover class-name aliasing candidates**  
+   Set `SHOW_PRETRAINED_CLASSES = True` to print `MODEL`'s pretrained class names
+   next to the dataset's class names (already printed by the structural check).
+   Purely informational — it does not change anything, but it is the cheapest
+   way to spot a concept that is named differently in the two vocabularies
+   (COCO `airplane` vs. VOC `aeroplane`). Feeds into the optional aliasing step
+   in Section 3.
+
 **What you edit**
 
 - Set `RUN_SMOKE_TEST = True` the first time you use a new dataset (or after any label change).  
 - Leave it `False` on subsequent runs once you trust the data.
+- Set `SHOW_PRETRAINED_CLASSES = True` only when you are actively looking for aliasing candidates.
 
 **Philosophy**  
 Reuse Ultralytics’ own machinery instead of writing a second, possibly buggy, dataset inspector.
@@ -123,6 +133,52 @@ model.train(
 - Class-count mismatches are handled automatically by Ultralytics (the head is re-initialized; the backbone keeps its weights).
 - Every run gets its own directory under `runs/` (`baseline`, `baseline2`, …). Nothing is overwritten.
 
+**Optional class-name aliasing (baseline-first)**
+
+Ultralytics' `cls_remap` (on by default) already transfers pretrained
+classification-head rows to classes whose names match the target dataset
+exactly (case/whitespace-insensitive). When the checkpoint and your dataset
+name the same concept differently, that row is treated as unmatched and
+reinitialized at random — the pretrained signal for that class is lost
+silently, with no error or warning from Ultralytics itself.
+
+Between `model = YOLO(MODEL)` and `model.train(...)`, the notebook pops an
+optional `class_aliases` mapping out of `overrides` (it is not a valid
+`model.train()` argument) and, if present, renames the checkpoint's class
+names in memory to match the dataset before training:
+
+```python
+CLASS_ALIASES = overrides.pop("class_aliases", {})
+if CLASS_ALIASES:
+    model.model.names = {
+        i: CLASS_ALIASES.get(n.lower(), n) for i, n in model.model.names.items()
+    }
+```
+
+This, like tuning, is **entirely dependent on your specific checkpoint +
+dataset pair** — there is no universally correct default. The notebook
+enforces the same baseline-first discipline:
+
+1. Train a `baseline` experiment with no `class_aliases` at all.
+2. Use Section 2's discovery cell (or the printed class lists) to find real
+   name mismatches — don't guess.
+3. Add a `class_aliases` mapping to a **new** experiment YAML and train a
+   second, separately named experiment (e.g. `baseline_aliased`).
+4. Compare **per-class** metrics in both runs' confusion matrices (Section 4).
+   Only the aliased classes should move. Keep the aliased run only if it
+   demonstrably helps; a mistaken alias can quietly hurt both classes involved.
+
+**`MODEL` must stay the untouched, officially pretrained checkpoint** across
+both the baseline and the aliased run. Aliasing renames names on the
+*original* pretrained classification head so `cls_remap` can transfer its
+weights; a checkpoint that has already been fine-tuned (e.g. the baseline's
+own `best.pt`) has already had its names rewritten to the dataset's names and
+its weights overwritten by training — aliasing it matches nothing and
+preserves nothing. The notebook's `class_aliases` cell detects the common
+mistake (a `MODEL` path under `runs/`) and warns, but the underlying rule is
+simple: only `EXPERIMENT_NAME` and the overrides file should change between
+the baseline and the aliased experiment.
+
 **Optional tuning (baseline-first)**  
 `RUN_TUNE = False` by default. The genetic tuner (`model.tune()`) runs many short trainings
 and is the **least** effective lever. Exhaust cheaper improvements first (better labels,
@@ -142,6 +198,7 @@ the `yolo-tuning` skill, and the [Ultralytics guide](https://docs.ultralytics.co
 
 **What you edit**  
 Usually nothing beyond the overrides file and the experiment name.  
+Set `class_aliases` in the overrides file only after finding a real name mismatch.  
 Set `RUN_TUNE = True` only when you have already fixed the more important bottlenecks.
 
 ---
@@ -163,7 +220,7 @@ metrics = best_model.val(data=DATA, plots=True, save_json=True)
 **Plots to read carefully**
 
 - `results.png` — train vs. val curves (over- / under-fitting)
-- `confusion_matrix.png` — which classes are confused
+- `confusion_matrix.png` — which classes are confused; also the tool for comparing an aliased run against its baseline, class by class
 - `PR_curve.png` / `F1_curve.png` — how to choose a deployment confidence threshold
 - A few raw prediction images — the cheapest way to discover failure modes that mAP hides
 
@@ -181,7 +238,8 @@ The cell deliberately reads from disk (`args.yaml`, `results.csv`, `best.pt`) so
 
 Everything printed here already exists on disk; the cell just makes it human-friendly.
 If optional tuning was run, record the path to `best_hyperparameters.yaml` in the free-form
-Notes of the Section 7 report.
+Notes of the Section 7 report. If class aliasing was used, note the alias mapping and the
+baseline comparison result there too.
 
 ---
 
@@ -215,7 +273,8 @@ docs/{EXPERIMENT_NAME}_report.md
 
 It contains configuration, training summary, an optional-tuning subsection (whether
 `RUN_TUNE` was enabled and where `best_hyperparameters.yaml` lives), metrics, export info,
-and a free-form “Notes” section for qualitative observations.
+and a free-form “Notes” section for qualitative observations — the right place to record
+a `class_aliases` mapping and how it compared to the baseline.
 
 ---
 
@@ -226,6 +285,9 @@ configs/datasets/*.yaml          ─┐
 configs/experiments/*.yaml       ─┤
                                  ├─► notebook (Section 1) ─► overrides dict
 TASK / MODEL / DATA / NAME       ─┘
+                                         │
+                                         ▼
+                       optional CLASS_ALIASES (Section 3, pre-train)
                                          │
                                          ▼
                               model.train(...)  ──► runs/<task>/<name>/
@@ -258,9 +320,9 @@ Everywhere else, prefer the standard Ultralytics API.
 |----------|----------------|
 | Section 1 variables | `TASK`, `MODEL`, `DATA`, `EXPERIMENT_NAME` |
 | `configs/datasets/` | New dataset YAML |
-| `configs/experiments/` | Optional overrides YAML |
-| Section 2 | Set `RUN_SMOKE_TEST = True` once |
-| Section 3 | Leave `RUN_TUNE = False` until baseline is healthy; then promote hyps |
+| `configs/experiments/` | Optional overrides YAML (hyperparameters, `class_aliases`) |
+| Section 2 | Set `RUN_SMOKE_TEST = True` once; optionally `SHOW_PRETRAINED_CLASSES = True` |
+| Section 3 | Leave `class_aliases` unset and `RUN_TUNE = False` until baseline is healthy; then promote either |
 | Section 6 | Change `EXPORT_FORMAT` if needed |
 | Everything else | Leave alone |
 

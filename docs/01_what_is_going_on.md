@@ -116,6 +116,7 @@ A4 therefore treats configuration as **overrides only**.
 - Put a dataset definition in `configs/datasets/<name>.yaml`.
 - Put only the settings you have a strong reason to change in `configs/experiments/<experiment_name>.yaml`.
 - Leave everything else to Ultralytics.
+- A `class_aliases` mapping (Section 3 of the notebook, for reusing pretrained classification-head weights when a checkpoint and your dataset name a shared class differently) is another example of an intentional override, alongside hyperparameters — add it only after finding a real mismatch, not by default.
 
 This keeps every deviation from the baseline explicit, diffable, and easy to understand six months later.
 

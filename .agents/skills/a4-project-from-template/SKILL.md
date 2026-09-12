@@ -104,12 +104,44 @@ batch: 16
 
 The notebook loads the overrides file automatically when it exists and matches `EXPERIMENT_NAME`.
 
+**Optional — class-name aliasing.** The same overrides file can also carry a
+`class_aliases` key (source/pretrained class name → this dataset's class name).
+It is consumed by Section 3, not `model.train()` directly, and lets Ultralytics'
+name-based `cls_remap` transfer pretrained classification-head rows for classes
+the checkpoint and the dataset name differently (e.g. COCO `airplane` vs. VOC
+`aeroplane`):
+
+```yaml
+# configs/experiments/baseline_aliased.yaml
+epochs: 100
+imgsz: 640
+batch: 16
+
+class_aliases:
+  airplane: aeroplane
+  motorcycle: motorbike
+```
+
+Only add this **after** a `baseline` run with no aliases, and only for name
+mismatches you actually found (Section 2's discovery cell, or by eye) — don't
+guess. See the notebook's "Optional — Transfer Classes with Name Aliases"
+intro section and Section 3 for the full mechanics.
+
+**`MODEL` must stay the untouched, officially pretrained checkpoint** for the
+aliased run — do not repoint it at the `baseline` run's `best.pt`. Aliasing
+renames names on the *original* pretrained classification head so its weights
+transfer; a fine-tuned checkpoint's names are already the dataset's names (so
+no `class_aliases` key matches) and its weights are already dataset-specific,
+not the general pretrained ones the technique is meant to preserve. Only
+`EXPERIMENT_NAME` (and the overrides file) should differ between the baseline
+and aliased runs — `MODEL` stays identical.
+
 ### 5. Run order (first pass)
 
 1. **§0 Environment** — install, `yolo checks`, optional Platform key / `datasets_dir`.
 2. **§1 Setup** — confirm TASK / MODEL / DATA print; fix model-suffix mismatch warnings.
-3. **§2 Dataset** — structural check + visual spot-check. Set `RUN_SMOKE_TEST = True` for new/changed data. Inspect `labels.jpg`, `labels_correlogram.jpg`, `train_batch0.jpg`.
-4. **§3 Train** — start with nano + modest epochs.
+3. **§2 Dataset** — structural check + visual spot-check. Set `RUN_SMOKE_TEST = True` for new/changed data. Inspect `labels.jpg`, `labels_correlogram.jpg`, `train_batch0.jpg`. Optionally set `SHOW_PRETRAINED_CLASSES = True` to list the checkpoint's class names alongside the dataset's, for spotting aliasing candidates.
+4. **§3 Train** — start with nano + modest epochs. Leave `class_aliases` unset for this first (`baseline`) run.
 5. **§4 Eval** — load `weights/best.pt`, inspect metrics and predictions.
 6. **§5 Summary** — re-runnable even in a fresh kernel.
 7. **§6 Export** — only if needed; re-validate the exported artifact.
@@ -119,13 +151,26 @@ Write custom Python only in cells the notebook marks as customization points, or
 
 ### 6. Later experiments (same project)
 
-Do **not** create a new project folder for model size or hyper-parameter changes.
+Do **not** create a new project folder for model size, hyper-parameter, or class-aliasing changes.
 
 1. Change `MODEL` and/or create a new overrides YAML.
 2. Set a new self-describing `EXPERIMENT_NAME`.
 3. Re-run the relevant sections (train + eval + summary).
 
 All runs stay under the same `projects/<Task>/<Dataset>/runs/`.
+
+**Class-aliasing follows the same baseline-first pattern as hyperparameter
+tuning**: run `baseline` (no aliases) first, then a separate `baseline_aliased`
+(or similarly named) experiment with `class_aliases` set, then compare
+per-class metrics between the two runs' confusion matrices before deciding
+which one to keep. Never treat an aliased run as a straight replacement for the
+baseline without that comparison — aliasing a wrong pair of classes can quietly
+hurt both.
+
+**Exception to step 1 above:** for a class-aliasing experiment specifically, do
+**not** change `MODEL` to the previous run's checkpoint — leave it as the same
+official pretrained weights used for `baseline`. Only add the `class_aliases`
+overrides file and a new `EXPERIMENT_NAME`.
 
 ## Checklist before calling the project done
 
@@ -135,6 +180,7 @@ All runs stay under the same `projects/<Task>/<Dataset>/runs/`.
 - [ ] Experiment name is self-describing
 - [ ] Overrides contain only intentional changes
 - [ ] Evaluation used `best.pt`
+- [ ] If class aliasing was used: an unaliased `baseline` exists and per-class metrics were compared against it
 - [ ] Markdown report exists under `docs/`
 - [ ] Notebook can be re-opened in a fresh session and still understood
 
@@ -142,12 +188,13 @@ All runs stay under the same `projects/<Task>/<Dataset>/runs/`.
 
 | Mistake | Fix |
 |---------|-----|
-| Wrong TASK vs model suffix | Use the sanity-check cell in §1 |
+| Wrong TASK vs. model suffix | Use the sanity-check cell in §1 |
 | Relative `path:` + wrong `datasets_dir` | Set `datasets_dir` once per environment |
 | Skipped smoke test | Run it once per new/changed dataset |
 | Evaluating `last.pt` | Always load `weights/best.pt` |
 | Full Ultralytics arg dump in overrides | Record only intentional changes |
 | New project per model variant | Keep experiments inside one task+dataset project |
+| Guessing `class_aliases` without checking per-class metrics | Compare aliased vs. baseline confusion matrices; keep the aliased run only if it helps |
 
 ## Relationship to other skills
 
