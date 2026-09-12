@@ -76,8 +76,6 @@ A4 should address practical bottlenecks that actually matter rather than adding 
 
 We deliberately avoid extensive abstractions, unnecessary configuration, and custom implementations of functionality that Ultralytics already provides.
 
-⸻
-
 2. Build on Mature Software
 
 Ultralytics already handles the core YOLO functionality, including training, validation, inference, and deployment.
@@ -85,8 +83,6 @@ Ultralytics already handles the core YOLO functionality, including training, val
 A4 should therefore build on top of the Ultralytics ecosystem rather than reimplement it.
 
 Custom source code should be kept as small as reasonably possible, with A4 focusing on the parts that Ultralytics does not already solve: providing a simple, practical, experiment-oriented workflow around the existing ecosystem.
-
-⸻
 
 3. Standard First, Zero Reinvention
 
@@ -236,8 +232,6 @@ The template is designed to be model-, dataset-, and task-agnostic wherever prac
 
 A project inherits its structure and workflow from the template and modifies only the parts necessary for its specific use case.
 
-⸻
-
 Task & Dataset-Based Project Organization
 
 Projects are organized by task and dataset, not by model.
@@ -263,8 +257,6 @@ projects/Detect/VOC/
 
 The goal is to keep A4 task- and dataset-oriented rather than model-oriented, while making model comparison and experimentation straightforward.
 
-⸻
-
 template/ & template/notebook.ipynb
 
 Every project is an edited instance of the general project template.
@@ -284,8 +276,6 @@ Engineers should primarily:
 Custom code should be rare and limited to explicitly designated areas where the standard workflow is insufficient.
 
 The ultimate goal is to minimize the amount of code engineers and users need to write, while keeping the workflow simple, reproducible, and easy to understand.
-
-⸻
 
 Notebook-Centered Projects
 
@@ -328,8 +318,6 @@ The notebook should contain predefined cells, explanations, visualizations, and 
 A4 keeps project-specific data preparation, inspection, experiment logic, and reporting in the notebook while delegating model training, evaluation, inference, and export to the Ultralytics ecosystem.
 
 The result should be a self-contained, low-code experiment notebook that is easy to understand, run, inspect, reproduce, and extend—without introducing unnecessary scripts or custom frameworks.
-
-⸻
 
 Default-First Configuration & Selective Customization
 
